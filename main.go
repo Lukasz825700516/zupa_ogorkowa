@@ -6,7 +6,6 @@ import (
 	// "net/http"
 	"io/ioutil"
 	"os"
-	"unsafe"
 
 	"github.com/diamondburned/gotk4-adwaita/pkg/adw"
 	// "github.com/diamondburned/gotk4/pkg/glib/v2"
@@ -39,12 +38,6 @@ func activate(app *adw.Application) {
 	win := bld.GetObject("mainWindow").Cast().(*adw.Window)
 
 	surf := bld.GetObject("gl").Cast().(*gtk.GLArea)
-
-	vbPane = 0
-	ibPane = 0
-	shader = 0
-	oPlane = 0
-
 	surf.ConnectResize(func(width, height int) {
 		gl.Viewport(0, 0, int32(width), int32(height))
 	})
@@ -68,12 +61,12 @@ func activate(app *adw.Application) {
 		{
 			vs := gl.CreateShader(gl.VERTEX_SHADER)
 			defer gl.DeleteShader(vs)
-			vss, err := ioutil.ReadFile("shaders/vertex_shader.glsl")
-			if err != nil {
-				println(err)
-				os.Exit(1)
-			}
 			{
+				vss, err := ioutil.ReadFile("shaders/vertex_shader.glsl")
+				if err != nil {
+					println(err)
+					os.Exit(1)
+				}
 				cvss, free := gl.Strs(string(vss))
 				defer free()
 				gl.ShaderSource(vs, 1, cvss, nil)
@@ -82,19 +75,19 @@ func activate(app *adw.Application) {
 				gl.GetShaderiv(vs, gl.COMPILE_STATUS, &s)
 				if s == 0 {
 					var l [512]byte
-					gl.GetShaderInfoLog(vs, int32(len(l)), nil, (*uint8)(unsafe.Pointer(&l)))
+					gl.GetShaderInfoLog(vs, int32(len(l)), nil, (*uint8)(gl.Ptr(l)))
 					println("Vertex shader error ", string(l[:]))
 					os.Exit(1)
 				}
 			}
 			fs := gl.CreateShader(gl.FRAGMENT_SHADER)
 			defer gl.DeleteShader(fs)
-			fss, err := ioutil.ReadFile("shaders/fragment_shader.glsl")
-			if err != nil {
-				println(err)
-				os.Exit(1)
-			}
 			{
+				fss, err := ioutil.ReadFile("shaders/fragment_shader.glsl")
+				if err != nil {
+					println(err)
+					os.Exit(1)
+				}
 				cfss, free := gl.Strs(string(fss))
 				defer free()
 				gl.ShaderSource(fs, 1, cfss, nil)
@@ -103,7 +96,7 @@ func activate(app *adw.Application) {
 				gl.GetShaderiv(fs, gl.COMPILE_STATUS, &s)
 				if s == 0 {
 					var l [512]byte
-					gl.GetShaderInfoLog(fs, int32(len(l)), nil, (*uint8)(unsafe.Pointer(&l)))
+					gl.GetShaderInfoLog(fs, int32(len(l)), nil, (*uint8)(gl.Ptr(l)))
 					println("Fragment shader error ", string(l[:]))
 					os.Exit(1)
 				}
@@ -122,26 +115,27 @@ func activate(app *adw.Application) {
 			println("ok?")
 		}
 
-		// gl.GetProgramiv(shader, gl.LINK_STATUS, &s)
-			if err := gl.GetError(); err != gl.NO_ERROR {
-				println("gl error GetProgramiv ", err)
-			}
+		gl.GetProgramiv(shader, gl.LINK_STATUS, &s)
+		if err := gl.GetError(); err != gl.NO_ERROR {
+			println("gl error GetProgramiv ", err)
+		}
 		if s == 0 {
 			var l [512]byte
-			gl.GetProgramInfoLog(shader, int32(len(l)), nil, (*uint8)(unsafe.Pointer(&l)))
+			gl.GetProgramInfoLog(shader, int32(len(l)), nil, (*uint8)(gl.Ptr(l)))
 			println("Linking error1 ", string(l[:]))
 			os.Exit(1)
 		}
 
 
 		gl.GenVertexArrays(1, &oPlane)
-		gl.GenBuffers(1, &vbPane)
-		gl.GenBuffers(1, &ibPane)
-
 		gl.BindVertexArray(oPlane)
+
 		if err := gl.GetError(); err != gl.NO_ERROR {
 			println("gl error gen buffers ", err)
 		}
+
+		gl.GenBuffers(1, &vbPane)
+		gl.GenBuffers(1, &ibPane)
 		
 		gl.BindBuffer(gl.ARRAY_BUFFER, vbPane)
 		gl.BufferData(gl.ARRAY_BUFFER, 4 * len(v), gl.Ptr(v), gl.STATIC_DRAW)
@@ -166,9 +160,17 @@ func activate(app *adw.Application) {
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		gl.UseProgram(shader)
+		if err := gl.GetError(); err != gl.NO_ERROR {
+			println("gl error use program ", err)
+		}
 		gl.BindVertexArray(oPlane)
-
+		if err := gl.GetError(); err != gl.NO_ERROR {
+			println("gl error vind vao ", err)
+		}
 		gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
+		if err := gl.GetError(); err != gl.NO_ERROR {
+			println("gl error draw elements ", err)
+		}
 
 		return true
 	})
