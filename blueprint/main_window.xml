@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="AdwWindow" id="mainWindow">
+    <property name="title" translatable="true">Zupa ogorkowa</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">1</property>
+        <child>
+          <object class="AdwHeaderBar"></object>
+        </child>
+        <child>
+          <object class="AdwFlap">
+            <child type="flap">
+              <object class="GtkBox">
+                <property name="hexpand">true</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">1</property>
+                    <child>
+                      <object class="AdwEntryRow">
+                        <property name="title" translatable="true">Block to Use</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwEntryRow">
+                        <property name="title" translatable="true">Height to Use</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwEntryRow">
+                        <property name="title" translatable="true">Lol to Use</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="AdwComboRow">
+                        <property name="title" translatable="true">Block to Use</property>
+                        <property name="model">
+                          <object class="GtkStringList">
+                            <items>
+                              <item>Stone</item>
+                              <item>Dirt</item>
+                              <item>Diamond</item>
+                            </items>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="content">
+              <object class="GtkGLArea">
+                <property name="vexpand">true</property>
+                <property name="hexpand">true</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

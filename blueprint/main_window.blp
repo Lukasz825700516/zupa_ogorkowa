@@ -1,0 +1,47 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.Window mainWindow {
+	title: _("Zupa ogorkowa");
+
+	Box {
+		orientation: vertical;
+		Adw.HeaderBar {
+		}
+
+		Adw.Flap {
+			[flap]
+			Box {
+				hexpand: true;
+				Box {
+					orientation: vertical;
+					Adw.EntryRow {
+						title: _("Block to Use");
+					}
+					Adw.EntryRow {
+						title: _("Height to Use");
+					}
+					Adw.EntryRow {
+						title: _("Lol to Use");
+					}
+					Adw.ComboRow {
+						title: _("Block to Use");
+						model: StringList {
+							strings [
+								"Stone",
+								"Dirt",
+								"Diamond",
+							]
+						};
+					}
+				}
+			}
+
+			[content]
+			GLArea {
+				vexpand: true;
+				hexpand: true;
+			}
+		}
+	}
+}
