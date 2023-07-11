@@ -62,6 +62,8 @@ func activate(app *adw.Application) {
 			0, 3, 1,
 		}
 
+		surf.MakeCurrent()
+
 	
 		{
 			vs := gl.CreateShader(gl.VERTEX_SHADER)
