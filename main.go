@@ -107,7 +107,7 @@ func activate(app *adw.Application) {
 				}
 			}
 
-			shader := gl.CreateProgram()
+			shader = gl.CreateProgram()
 			gl.AttachShader(shader, vs)
 			gl.AttachShader(shader, fs)
 			if err := gl.GetError(); err != gl.NO_ERROR {
